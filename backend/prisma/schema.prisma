@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+}
+
+model Categoria {
+  id     String       @id @default(uuid())
+  nome   String       @unique
+  contas ContaPagar[]
+}
+
+model Fornecedor {
+  id          String       @id @default(uuid())
+  nome        String
+  documento   String?      @unique
+  telefone    String?
+  email       String?
+  observacoes String?
+  contas      ContaPagar[]
+}
+
+model FormaPagamento {
+  id     String       @id @default(uuid())
+  nome   String       @unique
+  contas ContaPagar[]
+}
+
+model ContaPagar {
+  id               String          @id @default(uuid())
+  descricao        String
+  valor            Float
+  dataVencimento   DateTime
+  dataPagamento    DateTime?
+  status           StatusConta     @default(PENDENTE)
+  anexoUrl         String?
+
+  categoriaId      String
+  categoria        Categoria       @relation(fields: [categoriaId], references: [id])
+
+  fornecedorId     String
+  fornecedor       Fornecedor      @relation(fields: [fornecedorId], references: [id])
+
+  formaPagamentoId String?
+  formaPagamento   FormaPagamento? @relation(fields: [formaPagamentoId], references: [id])
+
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+}
+
+enum StatusConta {
+  PENDENTE
+  PAGA
+  VENCIDA
+}
