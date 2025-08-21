@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router'; 
 import { FornecedorService } from '../../services/fornecedor.service';
 import { NgxMaskDirective } from 'ngx-mask';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-fornecedor-form',
@@ -21,7 +22,8 @@ export class FornecedorFormComponent implements OnInit {
   constructor(
     private fornecedorService: FornecedorService,
     private router: Router,
-    private route: ActivatedRoute 
+    private route: ActivatedRoute,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -38,19 +40,21 @@ export class FornecedorFormComponent implements OnInit {
   }
 
   salvar(): void {
-    if (this.isEditMode && this.fornecedorId) {
-      
-      this.fornecedorService.atualizar(this.fornecedorId, this.fornecedor)
-        .subscribe(() => {
-          this.router.navigate(['/fornecedores']);
-        });
-    } else {
-     
-      this.fornecedorService.salvar(this.fornecedor)
-        .subscribe(() => {
-          this.router.navigate(['/fornecedores']);
-        });
-    }
+    const operacao = this.isEditMode && this.fornecedorId
+      ? this.fornecedorService.atualizar(this.fornecedorId, this.fornecedor)
+      : this.fornecedorService.salvar(this.fornecedor);
+
+    operacao.subscribe({
+      next: () => {
+        const message = this.isEditMode ? 'Fornecedor atualizado com sucesso!' : 'Fornecedor criado com sucesso!';
+        this.notificationService.show(message);
+        this.router.navigate(['/fornecedores']);
+      },
+      error: (err) => {
+        this.notificationService.show('Erro ao salvar fornecedor.', 'error');
+        console.error('Erro ao salvar fornecedor:', err);
+      }
+    });
   }
 
 cancelar(): void {

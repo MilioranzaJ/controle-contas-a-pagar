@@ -7,6 +7,7 @@ import { CategoriaService } from '../../services/categoria.service';
 import { FormaPagamentoService } from '../../services/forma-pagamento.service';
 import { ContaPagarService } from '../../services/conta-pagar.service';
 import { NgxMaskDirective } from 'ngx-mask';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-conta-pagar-form',
@@ -30,7 +31,8 @@ export class ContaPagarFormComponent implements OnInit {
     private fornecedorService: FornecedorService,
     private categoriaService: CategoriaService,
     private formaPagamentoService: FormaPagamentoService,
-    private contaPagarService: ContaPagarService
+    private contaPagarService: ContaPagarService,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -70,12 +72,18 @@ export class ContaPagarFormComponent implements OnInit {
       ? this.contaPagarService.atualizar(this.contaId, dadosParaSalvar)
       : this.contaPagarService.salvar(dadosParaSalvar);
 
-    operacao.subscribe({
+operacao.subscribe({
       next: () => {
-        // CORREÇÃO AQUI
+        // 3. CHAME A NOTIFICAÇÃO DE SUCESSO
+        const message = this.isEditMode ? 'Conta atualizada com sucesso!' : 'Conta criada com sucesso!';
+        this.notificationService.show(message);
         this.router.navigate(['/contas']);
       },
-      error: (err) => console.error('Erro ao salvar conta:', err)
+      error: (err) => {
+        // 4. CHAME A NOTIFICAÇÃO DE ERRO
+        this.notificationService.show('Erro ao salvar conta.', 'error');
+        console.error('Erro ao salvar conta:', err);
+      }
     });
   }
 

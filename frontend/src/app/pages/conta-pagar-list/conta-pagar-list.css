@@ -186,3 +186,16 @@
   font-family: 'Poppins', sans-serif;
   background-color: #fdfdff;
 }
+
+.btn-pay {
+  background-color: #f0f2f5; 
+}
+.btn-pay svg {
+  fill: #888; 
+}
+.btn-pay:hover {
+  background-color: #e2e6ea; 
+}
+.btn-pay:hover svg {
+  fill: #28a745; 
+}

@@ -6,6 +6,7 @@ import { ContaPagar, ContaPagarService } from '../../services/conta-pagar.servic
 import { FornecedorService } from '../../services/fornecedor.service'; // Importe
 import { CategoriaService } from '../../services/categoria.service';   // Importe
 import { filter } from 'rxjs';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-conta-pagar-list',
@@ -31,7 +32,8 @@ export class ContaPagarListComponent implements OnInit {
     private categoriaService: CategoriaService,
     private fornecedorService: FornecedorService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -64,11 +66,35 @@ export class ContaPagarListComponent implements OnInit {
     this.carregarContas();
   }
 
-  deletarConta(id: string): void {
+  marcarComoPaga(conta: any): void {
+    const confirmacao = confirm(`Tem certeza que deseja marcar a conta "${conta.descricao}" como paga?`);
+    if (confirmacao) {
+      this.contaPagarService.marcarComoPaga(conta.id).subscribe({
+        next: () => {
+          // 3. CHAME A NOTIFICAÇÃO
+          this.notificationService.show('Conta marcada como paga com sucesso!');
+          this.carregarContas();
+        },
+        error: (err) => {
+          this.notificationService.show('Erro ao marcar conta como paga.', 'error');
+          console.error('Erro ao marcar como paga:', err);
+        }
+      });
+    }
+  }
+
+deletarConta(id: string): void {
     if (confirm('Tem certeza que deseja deletar esta conta?')) {
       this.contaPagarService.deletar(id).subscribe({
-        next: () => this.carregarContas(),
-        error: (err) => console.error('Erro ao deletar conta:', err)
+        next: () => {
+          // 4. CHAME A NOTIFICAÇÃO
+          this.notificationService.show('Conta excluída com sucesso!');
+          this.carregarContas();
+        },
+        error: (err) => {
+          this.notificationService.show('Erro ao excluir conta.', 'error');
+          console.error('Erro ao deletar conta:', err);
+        }
       });
     }
   }

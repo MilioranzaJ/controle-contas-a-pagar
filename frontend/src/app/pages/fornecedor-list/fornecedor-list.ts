@@ -3,6 +3,7 @@ import { FornecedorService } from '../../services/fornecedor.service';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { NgxMaskPipe } from 'ngx-mask';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-fornecedor-list',
@@ -15,7 +16,7 @@ import { NgxMaskPipe } from 'ngx-mask';
 export class FornecedorListComponent implements OnInit {
   fornecedores: any[] = [];
 
-  constructor(private fornecedorService: FornecedorService) {}
+  constructor(private fornecedorService: FornecedorService, private notificationService: NotificationService) {}
 
   ngOnInit(): void {
     this.carregarFornecedores();
@@ -27,16 +28,19 @@ export class FornecedorListComponent implements OnInit {
     });
   }
 
-  deletarFornecedor(id: string): void {
+deletarFornecedor(id: string): void {
     const confirmacao = confirm('Tem certeza que deseja deletar este fornecedor? Esta ação não pode ser desfeita.');
 
     if (confirmacao) {
       this.fornecedorService.deletar(id).subscribe({
         next: () => {
-          console.log('Fornecedor deletado com sucesso!');
-          this.carregarFornecedores(); 
+          // Usando o serviço de notificação para dar feedback ao usuário
+          this.notificationService.show('Fornecedor excluído com sucesso!');
+          this.carregarFornecedores();
         },
         error: (err) => {
+          // Feedback de erro também
+          this.notificationService.show('Erro ao excluir fornecedor.', 'error');
           console.error('Erro ao deletar fornecedor:', err);
         }
       });
