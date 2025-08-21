@@ -83,6 +83,15 @@ export class ContaPagarListComponent implements OnInit {
     }
   }
 
+isVenceHoje(dataVencimentoStr: string): boolean {
+    const hoje = new Date();
+    const dataVencimento = new Date(dataVencimentoStr);
+    
+    return dataVencimento.getFullYear() === hoje.getFullYear() &&
+           dataVencimento.getMonth() === hoje.getMonth() &&
+           dataVencimento.getDate() === hoje.getDate();
+  }
+
 deletarConta(id: string): void {
     if (confirm('Tem certeza que deseja deletar esta conta?')) {
       this.contaPagarService.deletar(id).subscribe({

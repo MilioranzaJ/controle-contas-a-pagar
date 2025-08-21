@@ -199,3 +199,20 @@
 .btn-pay:hover svg {
   fill: #28a745; 
 }
+
+.status-badge.vencida {
+  background-color: #ffeef0;
+  color: #f44336;
+}
+
+.status-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.vence-hoje-badge {
+  font-size: 12px;
+  font-weight: 600;
+  color: #e74c3c; 
+}

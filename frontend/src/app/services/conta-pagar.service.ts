@@ -42,7 +42,7 @@ export class ContaPagarService {
           statusApi = 'PAGA';
         } else if (filtros.status === 'vencidas') {
           statusApi = 'VENCIDA';
-        }
+        } 
         if (statusApi) {
           params = params.append('status', statusApi);
         }

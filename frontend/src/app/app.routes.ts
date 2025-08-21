@@ -12,6 +12,7 @@ export const routes: Routes = [
   { path: 'contas/novo', component: ContaPagarFormComponent },
   { path: 'contas/detalhes/:id', component: ContaDetalhesComponent },
   { path: 'contas/status/:status', component: ContaPagarListComponent }, 
+  { path: 'contas/status/vencidas', component: ContaPagarListComponent },
   { path: 'contas/editar/:id', component: ContaPagarFormComponent },
 
   { path: 'fornecedores', component: FornecedorListComponent },

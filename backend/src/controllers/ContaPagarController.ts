@@ -1,75 +1,68 @@
 import { Request, Response } from 'express';
 import { prisma } from '../services/prisma';
-import { z } from 'zod'; // Usaremos Zod para validação de dados
+import { z } from 'zod';
 
-// Definindo um schema de validação para a criação/atualização de contas
-const contaSchema = z.object({
+// Schema de validação para a criação de novas contas
+const contaCreateSchema = z.object({
   descricao: z.string().min(1, 'A descrição é obrigatória.'),
   valor: z.number().positive('O valor deve ser um número positivo.'),
   dataVencimento: z.string().transform((str) => new Date(str)),
   categoriaId: z.string().uuid('O ID da categoria é inválido.'),
   fornecedorId: z.string().uuid('O ID do fornecedor é inválido.'),
-  formaPagamentoId: z.string().uuid('O ID da forma de pagamento é inválido.').optional().nullable(),
+  formaPagamentoId: z.string().uuid('O ID da forma de pagamento é inválido.'),
+  observacoes: z.string().optional(),
 });
 
 export class ContaPagarController {
-  // Criar uma nova conta a pagar
-  async create(req: Request, res: Response) {
+  // Método para listar contas, com filtros e atualização de status VENCIDA
+  async list(req: Request, res: Response) {
     try {
-      // Valida os dados de entrada com Zod
-      const dadosValidados = contaSchema.parse(req.body);
+      // ATUALIZAÇÃO AUTOMÁTICA DE STATUS
+      const hoje = new Date();
+      hoje.setHours(0, 0, 0, 0);
 
-      const conta = await prisma.contaPagar.create({
-        data: {
-          ...dadosValidados,
-          status: 'PENDENTE', // Status inicial é sempre pendente
+      await prisma.contaPagar.updateMany({
+        where: {
+          status: 'PENDENTE',
+          dataVencimento: { lt: hoje },
+        },
+        data: { status: 'VENCIDA' },
+      });
+
+      // LÓGICA DE FILTROS
+      const { status, categoriaId, fornecedorId } = req.query;
+      const where: any = {};
+
+      if (status && typeof status === 'string' && ['PENDENTE', 'PAGA', 'VENCIDA'].includes(status.toUpperCase())) {
+        where.status = status.toUpperCase() as 'PENDENTE' | 'PAGA' | 'VENCIDA';
+      }
+      if (categoriaId && typeof categoriaId === 'string') {
+        where.categoriaId = categoriaId;
+      }
+      if (fornecedorId && typeof fornecedorId === 'string') {
+        where.fornecedorId = fornecedorId;
+      }
+
+      const contas = await prisma.contaPagar.findMany({
+        where,
+        include: {
+          fornecedor: true,
+          categoria: true,
+          formaPagamento: true,
+        },
+        orderBy: {
+          dataVencimento: 'asc',
         },
       });
 
-      return res.status(201).json(conta);
+      return res.status(200).json(contas);
     } catch (error: any) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ message: 'Dados inválidos.', errors: error.issues });
-      }
-      return res.status(500).json({ message: error.message });
+      console.error("Erro ao listar contas:", error);
+      return res.status(500).json({ message: 'Erro ao listar contas.', error: error.message });
     }
   }
 
-  async list(req: Request, res: Response) {
-  try {
-    const { status, categoriaId, fornecedorId } = req.query;
-    const where: any = {};
-
-    if (status && typeof status === 'string' && ['PENDENTE', 'PAGA', 'VENCIDA'].includes(status.toUpperCase())) {
-      where.status = status.toUpperCase() as 'PENDENTE' | 'PAGA' | 'VENCIDA';
-    }
-    if (categoriaId && typeof categoriaId === 'string') {
-      where.categoriaId = categoriaId;
-    }
-    if (fornecedorId && typeof fornecedorId === 'string') {
-      where.fornecedorId = fornecedorId;
-    }
-
-    const contas = await prisma.contaPagar.findMany({
-      where,
-      include: {
-        fornecedor: true,
-        categoria: true,
-        formaPagamento: true,
-      },
-      orderBy: {
-        dataVencimento: 'asc',
-      },
-    });
-
-    return res.status(200).json(contas);
-  } catch (error: any) {
-    console.error("Erro ao listar contas:", error);
-    return res.status(500).json({ message: error.message });
-  }
-}
-
-  // Buscar uma conta por ID
+  // Método para buscar uma única conta por ID
   async findById(req: Request, res: Response) {
     try {
       const { id } = req.params;
@@ -88,24 +81,47 @@ export class ContaPagarController {
 
       return res.status(200).json(conta);
     } catch (error: any) {
-      return res.status(500).json({ message: error.message });
+      return res.status(500).json({ message: 'Erro ao buscar conta.', error: error.message });
     }
   }
 
-  // Atualizar uma conta (incluindo marcar como paga)
-async update(req: Request, res: Response) {
+  // Método para criar uma nova conta
+  async create(req: Request, res: Response) {
+    try {
+      // Valida os dados de entrada usando o schema do Zod
+      const dadosValidados = contaCreateSchema.parse(req.body);
+
+      const conta = await prisma.contaPagar.create({
+        data: {
+          ...dadosValidados,
+          status: 'PENDENTE',
+        },
+      });
+
+      return res.status(201).json(conta);
+    } catch (error: any) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: 'Dados inválidos.', errors: error.issues });
+      }
+      console.error('Erro ao criar conta:', error);
+      return res.status(500).json({ message: 'Erro ao criar conta.', error: error.message });
+    }
+  }
+
+  // Método para atualizar uma conta (PUT ou PATCH)
+  async update(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const dadosEntrada = req.body; // Pega tudo que veio no corpo da requisição
+      const dadosEntrada = req.body;
 
       const contaExistente = await prisma.contaPagar.findUnique({ where: { id } });
       if (!contaExistente) {
         return res.status(404).json({ message: 'Conta a pagar não encontrada.' });
       }
 
-      // Prepara o objeto de dados apenas com os campos que foram enviados
       const dadosAtualizados: any = {};
-
+      
+      // Constrói o objeto de atualização apenas com os campos fornecidos
       if (dadosEntrada.descricao !== undefined) dadosAtualizados.descricao = dadosEntrada.descricao;
       if (dadosEntrada.valor !== undefined) dadosAtualizados.valor = parseFloat(dadosEntrada.valor);
       if (dadosEntrada.dataVencimento !== undefined) dadosAtualizados.dataVencimento = new Date(dadosEntrada.dataVencimento);
@@ -115,7 +131,7 @@ async update(req: Request, res: Response) {
       if (dadosEntrada.formaPagamentoId !== undefined) dadosAtualizados.formaPagamentoId = dadosEntrada.formaPagamentoId;
       if (dadosEntrada.observacoes !== undefined) dadosAtualizados.observacoes = dadosEntrada.observacoes;
 
-      // Lógica específica para "Marcar como Paga"
+      // Se o status for 'PAGA' e não houver data de pagamento, define a data atual
       if (dadosEntrada.status === 'PAGA' && !contaExistente.dataPagamento) {
         dadosAtualizados.dataPagamento = new Date();
       }
@@ -123,13 +139,12 @@ async update(req: Request, res: Response) {
       const contaAtualizada = await prisma.contaPagar.update({
         where: { id },
         data: dadosAtualizados,
-        // Adicionamos o 'include' para que a resposta da API seja completa
-        include: {
-            fornecedor: true,
-            categoria: true,
-            formaPagamento: true,
-    },
-});
+        include: { // Retorna o objeto completo com as relações
+          fornecedor: true,
+          categoria: true,
+          formaPagamento: true,
+        },
+      });
 
       return res.status(200).json(contaAtualizada);
     } catch (error: any) {
@@ -138,7 +153,7 @@ async update(req: Request, res: Response) {
     }
   }
 
-  // Deletar uma conta
+  // Método para deletar uma conta
   async delete(req: Request, res: Response) {
     try {
       const { id } = req.params;
@@ -152,7 +167,8 @@ async update(req: Request, res: Response) {
 
       return res.status(204).send();
     } catch (error: any) {
-      return res.status(500).json({ message: error.message });
+      console.error('Erro ao deletar conta:', error);
+      return res.status(500).json({ message: 'Erro ao deletar conta.', error: error.message });
     }
   }
 }
