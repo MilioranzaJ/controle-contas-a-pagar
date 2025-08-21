@@ -26,7 +26,7 @@ export class ContaPagarFormComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private route: ActivatedRoute, 
+    private route: ActivatedRoute,
     private fornecedorService: FornecedorService,
     private categoriaService: CategoriaService,
     private formaPagamentoService: FormaPagamentoService,
@@ -40,7 +40,9 @@ export class ContaPagarFormComponent implements OnInit {
     if (this.contaId) {
       this.isEditMode = true;
       this.contaPagarService.buscarPorId(this.contaId).subscribe(dados => {
-        dados.dataVencimento = new Date(dados.dataVencimento).toISOString().split('T')[0];
+        if (dados.dataVencimento) {
+          dados.dataVencimento = new Date(dados.dataVencimento).toISOString().split('T')[0];
+        }
         this.conta = dados;
       });
     }
@@ -52,19 +54,17 @@ export class ContaPagarFormComponent implements OnInit {
     this.formaPagamentoService.listar().subscribe(dados => this.formasPagamento = dados);
   }
 
-salvar(): void {
+  salvar(): void {
     const dadosParaSalvar = {
       descricao: this.conta.descricao,
-      valor: parseFloat(this.conta.valor), 
+      valor: parseFloat(String(this.conta.valor).replace('R$ ', '').replace('.', '').replace(',', '.')),
       dataVencimento: this.conta.dataVencimento,
-      status: this.conta.status || 'PENDENTE', 
+      status: this.conta.status || 'PENDENTE',
       categoriaId: this.conta.categoriaId,
       fornecedorId: this.conta.fornecedorId,
       formaPagamentoId: this.conta.formaPagamentoId,
       observacoes: this.conta.observacoes,
     };
-
-    console.log('Objeto que será enviado para a API:', dadosParaSalvar); 
 
     const operacao = this.isEditMode && this.contaId
       ? this.contaPagarService.atualizar(this.contaId, dadosParaSalvar)
@@ -72,14 +72,15 @@ salvar(): void {
 
     operacao.subscribe({
       next: () => {
-        this.router.navigate(['/contas-a-pagar']);
+        // CORREÇÃO AQUI
+        this.router.navigate(['/contas']);
       },
       error: (err) => console.error('Erro ao salvar conta:', err)
     });
   }
 
-
-cancelar(): void {
-  this.router.navigate(['/contas']);
-}
+  cancelar(): void {
+    // CORREÇÃO AQUI
+    this.router.navigate(['/contas']);
+  }
 }

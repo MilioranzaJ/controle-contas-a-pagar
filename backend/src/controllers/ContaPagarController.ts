@@ -52,7 +52,6 @@ export class ContaPagarController {
 
     const contas = await prisma.contaPagar.findMany({
       where,
-      // A LINHA ABAIXO ESTAVA FALTANDO NESTE MÉTODO ESPECÍFICO
       include: {
         fornecedor: true,
         categoria: true,
