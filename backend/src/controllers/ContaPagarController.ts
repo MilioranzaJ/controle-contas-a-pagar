@@ -36,37 +36,39 @@ export class ContaPagarController {
   }
 
   async list(req: Request, res: Response) {
-    try {
-      // O status vem como string da URL. Ex: 'PENDENTE'
-      const { status } = req.query;
+  try {
+    const { status, categoriaId, fornecedorId } = req.query;
+    const where: any = {};
 
-      // Objeto de filtro para a consulta do Prisma
-      const where: any = {};
-
-      // Se o parâmetro 'status' foi enviado na URL, adiciona ao filtro
-      if (status && typeof status === 'string' && ['PENDENTE', 'PAGA', 'VENCIDA'].includes(status.toUpperCase())) {
-        // Garante que o status seja um dos valores válidos do nosso Enum
-        where.status = status.toUpperCase() as 'PENDENTE' | 'PAGA' | 'VENCIDA';
-      }
-
-      const contas = await prisma.contaPagar.findMany({
-        where, // Usa o objeto de filtro (pode estar vazio ou com o status)
-        include: {
-          fornecedor: true,
-          categoria: true,
-          formaPagamento: true,
-        },
-        orderBy: {
-          dataVencimento: 'asc',
-        },
-      });
-
-      return res.status(200).json(contas);
-    } catch (error: any) {
-      console.error("Erro ao listar contas:", error);
-      return res.status(500).json({ message: error.message });
+    if (status && typeof status === 'string' && ['PENDENTE', 'PAGA', 'VENCIDA'].includes(status.toUpperCase())) {
+      where.status = status.toUpperCase() as 'PENDENTE' | 'PAGA' | 'VENCIDA';
     }
+    if (categoriaId && typeof categoriaId === 'string') {
+      where.categoriaId = categoriaId;
+    }
+    if (fornecedorId && typeof fornecedorId === 'string') {
+      where.fornecedorId = fornecedorId;
+    }
+
+    const contas = await prisma.contaPagar.findMany({
+      where,
+      // A LINHA ABAIXO ESTAVA FALTANDO NESTE MÉTODO ESPECÍFICO
+      include: {
+        fornecedor: true,
+        categoria: true,
+        formaPagamento: true,
+      },
+      orderBy: {
+        dataVencimento: 'asc',
+      },
+    });
+
+    return res.status(200).json(contas);
+  } catch (error: any) {
+    console.error("Erro ao listar contas:", error);
+    return res.status(500).json({ message: error.message });
   }
+}
 
   // Buscar uma conta por ID
   async findById(req: Request, res: Response) {
