@@ -35,32 +35,23 @@ export class ContaPagarController {
     }
   }
 
-  // Listar contas com filtros
   async list(req: Request, res: Response) {
     try {
-      const { status, fornecedorId, categoriaId, vencimento_inicial, vencimento_final } = req.query;
+      // O status vem como string da URL. Ex: 'PENDENTE'
+      const { status } = req.query;
 
+      // Objeto de filtro para a consulta do Prisma
       const where: any = {};
 
-      if (status) {
-        where.status = status as 'PENDENTE' | 'PAGA' | 'VENCIDA';
-      }
-      if (fornecedorId) {
-        where.fornecedorId = fornecedorId as string;
-      }
-      if (categoriaId) {
-        where.categoriaId = categoriaId as string;
-      }
-      if (vencimento_inicial && vencimento_final) {
-        where.dataVencimento = {
-          gte: new Date(vencimento_inicial as string), // gte = Greater Than or Equal
-          lte: new Date(vencimento_final as string),   // lte = Less Than or Equal
-        };
+      // Se o parâmetro 'status' foi enviado na URL, adiciona ao filtro
+      if (status && typeof status === 'string' && ['PENDENTE', 'PAGA', 'VENCIDA'].includes(status.toUpperCase())) {
+        // Garante que o status seja um dos valores válidos do nosso Enum
+        where.status = status.toUpperCase() as 'PENDENTE' | 'PAGA' | 'VENCIDA';
       }
 
       const contas = await prisma.contaPagar.findMany({
-        where,
-        include: { // Inclui os dados relacionados para mostrar no frontend
+        where, // Usa o objeto de filtro (pode estar vazio ou com o status)
+        include: {
           fornecedor: true,
           categoria: true,
           formaPagamento: true,
@@ -72,6 +63,7 @@ export class ContaPagarController {
 
       return res.status(200).json(contas);
     } catch (error: any) {
+      console.error("Erro ao listar contas:", error);
       return res.status(500).json({ message: error.message });
     }
   }
@@ -130,7 +122,13 @@ async update(req: Request, res: Response) {
       const contaAtualizada = await prisma.contaPagar.update({
         where: { id },
         data: dadosAtualizados,
-      });
+        // Adicionamos o 'include' para que a resposta da API seja completa
+        include: {
+            fornecedor: true,
+            categoria: true,
+            formaPagamento: true,
+    },
+});
 
       return res.status(200).json(contaAtualizada);
     } catch (error: any) {
