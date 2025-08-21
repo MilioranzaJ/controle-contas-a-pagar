@@ -1,0 +1,98 @@
+/* frontend/src/app/app.css */
+
+.app-container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+}
+
+.sidebar {
+  width: 250px;
+  background-color: var(--white-color);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  padding-top: 20px;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: 2px; /* Reduzimos o espaço entre a logo e o texto */
+  padding: 0 15px 10px 15px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.logo-img {
+  width: 42px;
+  height: 48px;
+}
+
+.sidebar-header h2 {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.sidebar-menu {
+  list-style-type: none;
+}
+
+.sidebar-menu > li {
+  margin-bottom: 10px;
+}
+
+.sidebar-menu > li > a {
+  display: flex;
+  align-items: center;
+  padding: 12px 25px;
+  color: #333;
+  font-weight: 600;
+  font-size: 15px;
+  transition: all 0.2s ease-in-out;
+}
+
+.sidebar-menu > li > a.active-parent {
+  color: var(--primary-color);
+  background-color: #f0eeff;
+}
+
+.sub-menu {
+  list-style-type: none;
+  padding-left: 25px;
+  margin-top: 5px;
+}
+
+.sub-menu li a {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  color: var(--text-color-light);
+  font-weight: 500;
+  font-size: 14px;
+  border-left: 3px solid transparent;
+  transition: all 0.2s ease-in-out;
+}
+
+.sub-menu li a:hover {
+  background-color: #f0eeff;
+  color: var(--primary-color);
+}
+
+.sub-menu li a.active {
+  color: var(--primary-color);
+  border-left-color: var(--primary-color);
+  background-color: #f0eeff;
+  font-weight: 600;
+}
+
+.sidebar-menu > li > a.active {
+  color: var(--primary-color);
+  background-color: #f0eeff;
+}
+
+.main-content {
+  flex-grow: 1;
+  padding: 30px;
+  overflow-y: auto;
+}

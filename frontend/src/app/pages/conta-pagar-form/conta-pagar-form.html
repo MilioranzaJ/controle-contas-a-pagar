@@ -1,0 +1,82 @@
+<div class="content-card">
+  <div class="header-container">
+    <a routerLink="/contas" class="back-link">&larr; Voltar</a>
+    <h2>{{ isEditMode ? 'Editar Conta a Pagar' : 'Nova Conta a Pagar' }}</h2>
+    <p>{{ isEditMode ? 'Altere as informações da conta' : 'Cadastre uma nova conta para controle' }}</p>
+  </div>
+
+  <form (ngSubmit)="salvar()" #form="ngForm" class="form-container">
+    <h3>Informações da Conta</h3>
+
+    <div class="form-group">
+      <label for="descricao">Descrição *</label>
+      <input type="text" id="descricao" name="descricao" placeholder="Ex: Conta de energia elétrica - Janeiro 2024" 
+             required [(ngModel)]="conta.descricao" #descricao="ngModel">
+      <div *ngIf="descricao.invalid && (descricao.dirty || descricao.touched)" class="error-message">
+        A descrição é obrigatória.
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="valor">Valor *</label>
+        <input type="text" id="valor" name="valor" placeholder="R$ 0,00" required [(ngModel)]="conta.valor" #valor="ngModel"
+               mask="separator.2" thousandSeparator="." decimalMarker="," prefix="R$ ">
+        <div *ngIf="valor.invalid && (valor.dirty || valor.touched)" class="error-message">
+          O valor é obrigatório.
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="dataVencimento">Data de Vencimento *</label>
+        <input type="date" id="dataVencimento" name="dataVencimento" required [(ngModel)]="conta.dataVencimento" #dataVencimento="ngModel">
+        <div *ngIf="dataVencimento.invalid && (dataVencimento.dirty || dataVencimento.touched)" class="error-message">
+          A data é obrigatória.
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="categoria">Categoria *</label>
+        <select id="categoria" name="categoria" required [(ngModel)]="conta.categoriaId" #categoria="ngModel">
+          <option [ngValue]="null" disabled>Selecione a categoria</option>
+          <option *ngFor="let cat of categorias" [value]="cat.id">{{ cat.nome }}</option>
+        </select>
+        <div *ngIf="categoria.invalid && (categoria.dirty || categoria.touched)" class="error-message">
+          A categoria é obrigatória.
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="fornecedor">Fornecedor *</label>
+        <select id="fornecedor" name="fornecedor" required [(ngModel)]="conta.fornecedorId" #fornecedor="ngModel">
+          <option [ngValue]="null" disabled>Selecione o fornecedor</option>
+          <option *ngFor="let forn of fornecedores" [value]="forn.id">{{ forn.nome }}</option>
+        </select>
+        <div *ngIf="fornecedor.invalid && (fornecedor.dirty || fornecedor.touched)" class="error-message">
+          O fornecedor é obrigatório.
+        </div>
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label for="formaPagamento">Forma de Pagamento *</label>
+      <select id="formaPagamento" name="formaPagamento" required [(ngModel)]="conta.formaPagamentoId" #formaPagamento="ngModel">
+        <option [ngValue]="null" disabled>Selecione a forma de pagamento</option>
+        <option *ngFor="let forma of formasPagamento" [value]="forma.id">{{ forma.nome }}</option>
+      </select>
+      <div *ngIf="formaPagamento.invalid && (formaPagamento.dirty || formaPagamento.touched)" class="error-message">
+        A forma de pagamento é obrigatória.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="observacoes">Observações</label>
+      <textarea id="observacoes" name="observacoes" rows="3" placeholder="Informações adicionais sobre a conta..." [(ngModel)]="conta.observacoes"></textarea>
+    </div>
+
+    <div class="form-actions">
+      <button type="button" class="btn btn-secondary" (click)="cancelar()">Cancelar</button>
+      <button type="submit" class="btn btn-primary" [disabled]="form.invalid">Salvar Conta</button>
+    </div>
+  </form>
+</div>

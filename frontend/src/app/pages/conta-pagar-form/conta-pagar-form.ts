@@ -1,0 +1,85 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Router, ActivatedRoute, RouterLink } from '@angular/router';
+import { FornecedorService } from '../../services/fornecedor.service';
+import { CategoriaService } from '../../services/categoria.service';
+import { FormaPagamentoService } from '../../services/forma-pagamento.service';
+import { ContaPagarService } from '../../services/conta-pagar.service';
+import { NgxMaskDirective } from 'ngx-mask';
+
+@Component({
+  selector: 'app-conta-pagar-form',
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterLink, NgxMaskDirective],
+  templateUrl: './conta-pagar-form.html',
+  styleUrl: './conta-pagar-form.css'
+})
+export class ContaPagarFormComponent implements OnInit {
+  conta: any = {};
+  contaId: string | null = null;
+  isEditMode = false;
+
+  fornecedores: any[] = [];
+  categorias: any[] = [];
+  formasPagamento: any[] = [];
+
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute, 
+    private fornecedorService: FornecedorService,
+    private categoriaService: CategoriaService,
+    private formaPagamentoService: FormaPagamentoService,
+    private contaPagarService: ContaPagarService
+  ) {}
+
+  ngOnInit(): void {
+    this.carregarDropdowns();
+    this.contaId = this.route.snapshot.paramMap.get('id');
+
+    if (this.contaId) {
+      this.isEditMode = true;
+      this.contaPagarService.buscarPorId(this.contaId).subscribe(dados => {
+        dados.dataVencimento = new Date(dados.dataVencimento).toISOString().split('T')[0];
+        this.conta = dados;
+      });
+    }
+  }
+
+  carregarDropdowns(): void {
+    this.fornecedorService.listar().subscribe(dados => this.fornecedores = dados);
+    this.categoriaService.listar().subscribe(dados => this.categorias = dados);
+    this.formaPagamentoService.listar().subscribe(dados => this.formasPagamento = dados);
+  }
+
+salvar(): void {
+    const dadosParaSalvar = {
+      descricao: this.conta.descricao,
+      valor: parseFloat(this.conta.valor), 
+      dataVencimento: this.conta.dataVencimento,
+      status: this.conta.status || 'PENDENTE', 
+      categoriaId: this.conta.categoriaId,
+      fornecedorId: this.conta.fornecedorId,
+      formaPagamentoId: this.conta.formaPagamentoId,
+      observacoes: this.conta.observacoes,
+    };
+
+    console.log('Objeto que será enviado para a API:', dadosParaSalvar); 
+
+    const operacao = this.isEditMode && this.contaId
+      ? this.contaPagarService.atualizar(this.contaId, dadosParaSalvar)
+      : this.contaPagarService.salvar(dadosParaSalvar);
+
+    operacao.subscribe({
+      next: () => {
+        this.router.navigate(['/contas-a-pagar']);
+      },
+      error: (err) => console.error('Erro ao salvar conta:', err)
+    });
+  }
+
+
+cancelar(): void {
+  this.router.navigate(['/contas']);
+}
+}

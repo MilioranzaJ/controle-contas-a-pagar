@@ -1,0 +1,188 @@
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+.header-container h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text-color);
+}
+.header-container p {
+  color: var(--text-color-light);
+}
+.btn-new {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 10px 18px;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: 500;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+.btn-new:hover {
+  background-color: #5847d8;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+.filter-card {
+  background-color: var(--white-color);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px var(--shadow-color);
+  margin-bottom: 25px;
+}
+.contas-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.conta-card {
+  background-color: var(--white-color);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px var(--shadow-color);
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.conta-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+}
+.card-main-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.card-details {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.card-details .descricao {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-color);
+}
+.card-details .fornecedor {
+  font-size: 14px;
+  color: var(--text-color-light);
+}
+.card-details .vencimento {
+  font-size: 13px;
+  color: #e74c3c;
+  font-weight: 500;
+}
+.card-valor {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--primary-color);
+}
+.card-actions {
+  padding-top: 15px;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.status-badge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.status-badge.pendente {
+  background-color: #fff4e5;
+  color: #ff9800;
+}
+.status-badge.paga {
+  background-color: #e8f5e9;
+  color: #4caf50;
+}
+.status-badge.vencida {
+  background-color: #ffeef0;
+  color: #f44336;
+}
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease-in-out;
+}
+.btn-icon:hover {
+  transform: translateY(-2px);
+}
+.btn-icon svg {
+  width: 16px;
+  height: 16px;
+  transition: fill 0.2s ease-in-out;
+}
+.btn-edit {
+  background-color: #f0f2f5;
+}
+.btn-edit svg {
+  fill: #888;
+}
+.btn-edit:hover {
+  background-color: #e2e6ea;
+}
+.btn-edit:hover svg {
+  fill: var(--primary-color);
+}
+.btn-delete {
+  background-color: #f0f2f5;
+}
+.btn-delete svg {
+  fill: #888;
+}
+.btn-delete:hover {
+  background-color: #e2e6ea;
+}
+.btn-delete:hover svg {
+  fill: #dc3545;
+}
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  color: var(--text-color-light);
+}
+
+.filter-row {
+  display: flex;
+  gap: 20px;
+}
+.form-group {
+  flex: 1;
+}
+.form-group label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+.form-group select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  font-size: 14px;
+  font-family: 'Poppins', sans-serif;
+  background-color: #fdfdff;
+}

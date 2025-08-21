@@ -1,0 +1,45 @@
+<div *ngIf="conta" class="content-card">
+  <div class="header-container">
+    <a routerLink="/contas" class="back-link">&larr; Voltar para a lista</a>
+    <h2>Detalhes da Conta</h2>
+  </div>
+
+  <div class="details-grid">
+    <div class="detail-item">
+      <strong>Descrição</strong>
+      <p>{{ conta.descricao }}</p>
+    </div>
+    <div class="detail-item">
+      <strong>Valor</strong>
+      <p>{{ conta.valor | currency:'BRL' }}</p>
+    </div>
+    <div class="detail-item">
+      <strong>Data de Vencimento</strong>
+      <p>{{ conta.dataVencimento | date:'dd/MM/yyyy' }}</p>
+    </div>
+    <div class="detail-item">
+      <strong>Status</strong>
+      <p>{{ conta.status }}</p>
+    </div>
+    <div class="detail-item">
+      <strong>Fornecedor</strong>
+      <p>{{ conta.fornecedor?.nome }}</p>
+    </div>
+    <div class="detail-item">
+      <strong>Categoria</strong>
+      <p>{{ conta.categoria?.nome }}</p>
+    </div>
+    <div *ngIf="conta.dataPagamento" class="detail-item">
+      <strong>Data de Pagamento</strong>
+      <p>{{ conta.dataPagamento | date:'dd/MM/yyyy' }}</p>
+    </div>
+    <div *ngIf="conta.formaPagamento" class="detail-item">
+      <strong>Forma de Pagamento</strong>
+      <p>{{ conta.formaPagamento?.nome }}</p>
+    </div>
+    <div *ngIf="conta.observacoes" class="detail-item full-width">
+      <strong>Observações</strong>
+      <p>{{ conta.observacoes }}</p>
+    </div>
+  </div>
+</div>
