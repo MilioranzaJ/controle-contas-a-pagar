@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { prisma } from '../services/prisma';
 import { z } from 'zod';
 
-// Schema de validação para a criação de novas contas
+
 const contaCreateSchema = z.object({
   descricao: z.string().min(1, 'A descrição é obrigatória.'),
   valor: z.number().positive('O valor deve ser um número positivo.'),
@@ -14,10 +14,10 @@ const contaCreateSchema = z.object({
 });
 
 export class ContaPagarController {
-  // Método para listar contas, com filtros e atualização de status VENCIDA
+  
   async list(req: Request, res: Response) {
     try {
-      // ATUALIZAÇÃO AUTOMÁTICA DE STATUS
+      
       const hoje = new Date();
       hoje.setHours(0, 0, 0, 0);
 
@@ -29,7 +29,7 @@ export class ContaPagarController {
         data: { status: 'VENCIDA' },
       });
 
-      // LÓGICA DE FILTROS
+      //filtros
       const { status, categoriaId, fornecedorId } = req.query;
       const where: any = {};
 
@@ -62,7 +62,7 @@ export class ContaPagarController {
     }
   }
 
-  // Método para buscar uma única conta por ID
+  
   async findById(req: Request, res: Response) {
     try {
       const { id } = req.params;
@@ -85,10 +85,10 @@ export class ContaPagarController {
     }
   }
 
-  // Método para criar uma nova conta
+  //cria uma nova conta
   async create(req: Request, res: Response) {
     try {
-      // Valida os dados de entrada usando o schema do Zod
+      
       const dadosValidados = contaCreateSchema.parse(req.body);
 
       const conta = await prisma.contaPagar.create({
@@ -108,7 +108,7 @@ export class ContaPagarController {
     }
   }
 
-  // Método para atualizar uma conta (PUT ou PATCH)
+  
   async update(req: Request, res: Response) {
     try {
       const { id } = req.params;
@@ -121,7 +121,7 @@ export class ContaPagarController {
 
       const dadosAtualizados: any = {};
       
-      // Constrói o objeto de atualização apenas com os campos fornecidos
+      
       if (dadosEntrada.descricao !== undefined) dadosAtualizados.descricao = dadosEntrada.descricao;
       if (dadosEntrada.valor !== undefined) dadosAtualizados.valor = parseFloat(dadosEntrada.valor);
       if (dadosEntrada.dataVencimento !== undefined) dadosAtualizados.dataVencimento = new Date(dadosEntrada.dataVencimento);
@@ -131,7 +131,7 @@ export class ContaPagarController {
       if (dadosEntrada.formaPagamentoId !== undefined) dadosAtualizados.formaPagamentoId = dadosEntrada.formaPagamentoId;
       if (dadosEntrada.observacoes !== undefined) dadosAtualizados.observacoes = dadosEntrada.observacoes;
 
-      // Se o status for 'PAGA' e não houver data de pagamento, define a data atual
+      
       if (dadosEntrada.status === 'PAGA' && !contaExistente.dataPagamento) {
         dadosAtualizados.dataPagamento = new Date();
       }
@@ -139,7 +139,7 @@ export class ContaPagarController {
       const contaAtualizada = await prisma.contaPagar.update({
         where: { id },
         data: dadosAtualizados,
-        include: { // Retorna o objeto completo com as relações
+        include: { //retorna o objeto completo com as relações
           fornecedor: true,
           categoria: true,
           formaPagamento: true,
@@ -153,7 +153,7 @@ export class ContaPagarController {
     }
   }
 
-  // Método para deletar uma conta
+  //metodo para deletar uma conta
   async delete(req: Request, res: Response) {
     try {
       const { id } = req.params;

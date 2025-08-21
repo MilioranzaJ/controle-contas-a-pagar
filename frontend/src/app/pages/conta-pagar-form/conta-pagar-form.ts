@@ -74,13 +74,11 @@ export class ContaPagarFormComponent implements OnInit {
 
 operacao.subscribe({
       next: () => {
-        // 3. CHAME A NOTIFICAÇÃO DE SUCESSO
         const message = this.isEditMode ? 'Conta atualizada com sucesso!' : 'Conta criada com sucesso!';
         this.notificationService.show(message);
         this.router.navigate(['/contas']);
       },
       error: (err) => {
-        // 4. CHAME A NOTIFICAÇÃO DE ERRO
         this.notificationService.show('Erro ao salvar conta.', 'error');
         console.error('Erro ao salvar conta:', err);
       }
@@ -88,7 +86,6 @@ operacao.subscribe({
   }
 
   cancelar(): void {
-    // CORREÇÃO AQUI
     this.router.navigate(['/contas']);
   }
 }

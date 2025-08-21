@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { prisma } from '../services/prisma';
 
 export class FormaPagamentoController {
-  // Criar uma nova forma de pagamento
+  //cria uma nova forma de pagamento
   async create(req: Request, res: Response) {
     try {
       const { nome } = req.body;
@@ -24,7 +24,7 @@ export class FormaPagamentoController {
     }
   }
 
-  // Listar todas as formas de pagamento
+  //listar todas as formas de pagamento
   async list(req: Request, res: Response) {
     try {
       const formasPagamento = await prisma.formaPagamento.findMany({
@@ -36,7 +36,7 @@ export class FormaPagamentoController {
     }
   }
   
-  // Deletar uma forma de pagamento
+  //deleta uma forma de pagamento
   async delete(req: Request, res: Response) {
     try {
       const { id } = req.params;

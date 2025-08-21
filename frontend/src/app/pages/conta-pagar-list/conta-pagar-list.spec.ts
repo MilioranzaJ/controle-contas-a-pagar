@@ -1,4 +1,3 @@
-// frontend/src/app/pages/conta-pagar-list/conta-pagar-list.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
@@ -7,7 +6,7 @@ import { ContaPagar, ContaPagarService } from '../../services/conta-pagar.servic
 @Component({
   selector: 'app-conta-pagar-list',
   standalone: true,
-  imports: [CommonModule, RouterLink], // Apenas CommonModule e RouterLink
+  imports: [CommonModule, RouterLink], 
   providers: [ContaPagarService],
   templateUrl: './conta-pagar-list.html',
   styleUrl: './conta-pagar-list.css'

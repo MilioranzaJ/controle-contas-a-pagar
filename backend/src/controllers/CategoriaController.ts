@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { prisma } from '../services/prisma';
 
 export class CategoriaController {
-  // Criar uma nova categoria
+  
   async create(req: Request, res: Response) {
     try {
       const { nome } = req.body;
@@ -17,7 +17,7 @@ export class CategoriaController {
 
       return res.status(201).json(categoria);
     } catch (error: any) {
-      // Código 'P2002' é para violação de constraint única (unique) no Prisma
+      
       if (error.code === 'P2002') {
         return res.status(400).json({ message: 'Uma categoria com este nome já existe.' });
       }
@@ -25,7 +25,7 @@ export class CategoriaController {
     }
   }
 
-  // Listar todas as categorias
+  //listar todas as categorias
   async list(req: Request, res: Response) {
     try {
       const categorias = await prisma.categoria.findMany({
@@ -37,7 +37,7 @@ export class CategoriaController {
     }
   }
 
-  // Buscar uma categoria por ID
+  //busca uma categoria por ID
   async findById(req: Request, res: Response) {
     try {
       const { id } = req.params;
@@ -55,7 +55,7 @@ export class CategoriaController {
     }
   }
 
-  // Atualizar uma categoria
+  //atualiza uma categoria
   async update(req: Request, res: Response) {
     try {
       const { id } = req.params;
@@ -73,7 +73,7 @@ export class CategoriaController {
       });
 
       return res.status(200).json(categoria);
-    } catch (error: any) { // <<---- O ERRO ESTAVA AQUI: FALTAVA O '{'
+    } catch (error: any) { 
       if (error.code === 'P2002') {
         return res.status(400).json({ message: 'Uma categoria com este nome já existe.' });
       }
@@ -81,7 +81,7 @@ export class CategoriaController {
     }
   }
 
-  // Deletar uma categoria
+  //deletar uma categoria
   async delete(req: Request, res: Response) {
     try {
       const { id } = req.params;

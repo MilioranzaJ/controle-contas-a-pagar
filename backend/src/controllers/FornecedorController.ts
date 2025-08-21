@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { prisma } from '../services/prisma';
 
 export class FornecedorController {
-  // Criar um novo fornecedor
+  //cria um novo fornecedor
   async create(req: Request, res: Response) {
     try {
       const { nome, documento, telefone, email, observacoes } = req.body;
@@ -21,7 +21,7 @@ export class FornecedorController {
     }
   }
 
-  // Listar todos os fornecedores
+  //lista todos os fornecedores
   async list(req: Request, res: Response) {
     try {
       const fornecedores = await prisma.fornecedor.findMany({
@@ -33,7 +33,7 @@ export class FornecedorController {
     }
   }
 
-  // Buscar um fornecedor por ID
+  //busca um fornecedor por ID
   async findById(req: Request, res: Response) {
     try {
       const { id } = req.params;
@@ -51,7 +51,7 @@ export class FornecedorController {
     }
   }
 
-  // Atualizar um fornecedor
+  //atualiza um fornecedor
   async update(req: Request, res: Response) {
     try {
       const { id } = req.params;
@@ -74,7 +74,7 @@ export class FornecedorController {
     }
   }
 
-  // Deletar um fornecedor
+  //deleta um fornecedor
   async delete(req: Request, res: Response) {
     try {
       const { id } = req.params;
@@ -89,9 +89,9 @@ export class FornecedorController {
         where: { id },
       });
 
-      return res.status(204).send(); // 204 No Content
+      return res.status(204).send(); 
     } catch (error: any) {
-      // Tratar erro caso o fornecedor esteja atrelado a uma conta a pagar
+      
       if (error.code === 'P2003') {
         return res.status(400).json({ message: 'Não é possível excluir. O fornecedor está vinculado a uma ou mais contas a pagar.' });
       }

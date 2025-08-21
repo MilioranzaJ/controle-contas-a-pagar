@@ -1,4 +1,3 @@
-/* frontend/src/app/pages/conta-pagar-form/conta-pagar-form.css */
 .content-card {
   background-color: var(--white-color);
   padding: 30px;
@@ -84,10 +83,10 @@ input[type="date"] {
 .btn-secondary { background-color: #f0f2f5; color: var(--text-color-light); border: 1px solid var(--border-color); }
 .btn-secondary:hover { background-color: #e2e6ea; }
 
-/* ESTA É A REGRA QUE ESTAVA FALTANDO */
+
 .error-message {
-  color: #dc3545; /* Um tom de vermelho para erros */
-  font-size: 12px; /* Deixa a fonte um pouco menor */
+  color: #dc3545; 
+  font-size: 12px; 
   font-weight: 500;
-  margin-top: 5px; /* Adiciona um pequeno espaço acima da mensagem */
+  margin-top: 5px; 
 }

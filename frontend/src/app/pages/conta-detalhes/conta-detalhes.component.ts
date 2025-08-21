@@ -9,7 +9,6 @@ import { NgxMaskPipe } from 'ngx-mask';
   standalone: true,
   imports: [CommonModule, RouterLink, NgxMaskPipe],
   providers: [ContaPagarService],
-  // CORREÇÃO AQUI:
   templateUrl: './conta-detalhes.component.html',
   styleUrl: './conta-detalhes.component.css'
 })

@@ -11,11 +11,11 @@
 .header-container h2 { font-size: 22px; font-weight: 600; color: var(--text-color); }
 .details-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr; /* Duas colunas */
+  grid-template-columns: 1fr 1fr; 
   gap: 25px;
   border-top: 1px solid var(--border-color);
   padding-top: 25px;
 }
 .detail-item strong { font-weight: 500; color: var(--text-color-light); font-size: 13px; }
 .detail-item p { font-size: 15px; color: var(--text-color); margin-top: 4px; }
-.full-width { grid-column: 1 / -1; } /* Faz o campo ocupar as duas colunas */
+.full-width { grid-column: 1 / -1; } 
